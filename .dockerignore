@@ -1,0 +1,7 @@
+target
+!target/release/z2p
+
+.DS_Store
+.idea
+.git
+.cache

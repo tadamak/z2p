@@ -1,0 +1,37 @@
+version: '3.4'
+services:
+  app:
+    build:
+      context: .
+      target: builder
+      args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
+        USER_PACKAGES: ${USER_PACKAGES}
+    stdin_open: true
+    tty: true
+    depends_on:
+      - database
+    ports:
+      - "48000:8000"
+    volumes:
+      - .:/usr/src/app
+    environment:
+      DATABASE_PRIMARY_HOST: ${DATABASE_PRIMARY_HOST:-database}
+      DATABASE_PRIMARY_PORT: ${DATABASE_PRIMARY_PORT:-5432}
+      DATABASE_NAME: ${DATABASE_NAME:-main}
+      DATABASE_USER: ${DATABASE_USER:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-password}
+      DATABASE_SCHEMA: ${DATABASE_SCHEMA:-z2p}
+  database:
+    image: mdillon/postgis:10-alpine
+    environment:
+      POSTGRES_DB: 'main'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'password'
+    ports:
+      - "45432:5432"
+    volumes:
+      - z2p-db-data:/var/lib/postgresql/data
+
+volumes:
+  z2p-db-data:
